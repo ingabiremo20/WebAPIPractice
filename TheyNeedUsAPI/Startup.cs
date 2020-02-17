@@ -22,7 +22,7 @@ namespace TheyNeedUsAPI
         {
             Configuration = configuration;
         }
-
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -30,8 +30,18 @@ namespace TheyNeedUsAPI
         {
             services.AddScoped<IPostsRepository, PostsRepository>();
             services.AddControllers();
-            services.AddMvc();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:4200","*","*");
+                                 
+                });
+            });
+            services.AddMvc(); 
+        
             var connection = "Server=MOISE\\SQLEXPRESS;Database=TheyNeedUs;Trusted_Connection=True;MultipleActiveResultSets=true";
             services.AddDbContext<TheyNeedUsAPIContext>(options =>
                     options.UseSqlServer(connection));
@@ -44,9 +54,10 @@ namespace TheyNeedUsAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseHttpsRedirection();
-
+           
             app.UseRouting();
 
             app.UseAuthorization();
