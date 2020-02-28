@@ -36,12 +36,15 @@ namespace TheyNeedUsAPI
                 options.AddPolicy(MyAllowSpecificOrigins,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:4200","*","*");
-                                 
+                    builder.WithOrigins("http://localhost:4200","*","*")
+                    .AllowAnyHeader()
+                                .AllowAnyMethod();
+
                 });
+              
             });
-            services.AddMvc(); 
-        
+            services.AddMvc()/*.SetCompatibilityVersion(CompatibilityVersion.Version_2_2)*/;
+
             var connection = "Server=MOISE\\SQLEXPRESS;Database=TheyNeedUs;Trusted_Connection=True;MultipleActiveResultSets=true";
             services.AddDbContext<TheyNeedUsAPIContext>(options =>
                     options.UseSqlServer(connection));

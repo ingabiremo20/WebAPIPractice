@@ -13,7 +13,7 @@ using TheyNeedUsAPI.Models;
 namespace TheyNeedUsAPI.Controllers
 {
 
-  //  [EnableCors("MyAllowSpecificOrigins")]
+  // [EnableCors()]
     [Route("api/[controller]")]
     [ApiController]
     public class PostsController : ControllerBase
@@ -41,6 +41,7 @@ namespace TheyNeedUsAPI.Controllers
         }
 
         // GET: api/Posts/5
+    
         [HttpGet("{id}")]
         public async Task<ActionResult<Posts>> GetPosts(int id)
         {
