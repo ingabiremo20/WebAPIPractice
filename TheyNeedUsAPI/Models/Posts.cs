@@ -17,7 +17,9 @@ namespace TheyNeedUsAPI.Models
         [DataType(DataType.Text)]
         [StringLength(1000)]
         public string  Description { get; set; }
-        public string SavedDate { get; set; }
-        public string  Status { get; set; }
+        public string SavedDate { get; set; } = DateTime.UtcNow.ToString();
+        public string Status { get; set; } = "Saved";
+
+      
     }
 }

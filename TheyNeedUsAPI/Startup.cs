@@ -57,6 +57,10 @@ namespace TheyNeedUsAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseHsts();
+            }
             app.UseCors(MyAllowSpecificOrigins);
 
             app.UseHttpsRedirection();
