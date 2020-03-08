@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http.Cors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ namespace TheyNeedUsAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
+   
     public class PostsController : ControllerBase
     {
       

@@ -13,6 +13,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using TheyNeedUsAPI.Contracts;
 using TheyNeedUsAPI.Repositories;
+using Microsoft.AspNetCore.Identity;
+using TheyNeedUsAPI.Models;
 
 namespace TheyNeedUsAPI
 {
@@ -28,6 +30,10 @@ namespace TheyNeedUsAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddIdentity<ApplicationUser, IdentityRole>(cfg =>
+            {
+                cfg.User.RequireUniqueEmail = true;                
+            }).AddEntityFrameworkStores<TheyNeedUsAPIContext>();
             services.AddScoped<IPostsRepository, PostsRepository>();
             services.AddControllers();
 
@@ -64,12 +70,10 @@ namespace TheyNeedUsAPI
             app.UseCors(MyAllowSpecificOrigins);
 
             app.UseHttpsRedirection();
-           
-            app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
-            
 
+            app.UseRouting();   
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

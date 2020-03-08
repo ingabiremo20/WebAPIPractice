@@ -19,7 +19,8 @@ namespace TheyNeedUsAPI.Models
         public string  Description { get; set; }
         public string SavedDate { get; set; } = DateTime.UtcNow.ToString();
         public string Status { get; set; } = "Saved";
+        public ApplicationUser User { get; set; }
 
-      
+
     }
 }
