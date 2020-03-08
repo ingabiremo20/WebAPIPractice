@@ -16,6 +16,7 @@ namespace TheyNeedUsAPI.Controllers
   // [EnableCors()]
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class PostsController : ControllerBase
     {
       
@@ -28,7 +29,8 @@ namespace TheyNeedUsAPI.Controllers
       
 
         // GET: api/Posts
-        [HttpGet]       
+        [HttpGet]
+        [ProducesResponseType(200)]
         public IActionResult Getposts()
         {
 
@@ -42,24 +44,35 @@ namespace TheyNeedUsAPI.Controllers
 
         // GET: api/Posts/5
     
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<Posts>> GetPosts(int id)
         {
-            if (await PostsExists(id))
+            try
             {
-            var posts = await _postsRepository.FindPost(id);
+                if (await PostsExists(id))
+                {
+                    var posts = await _postsRepository.FindPost(id);
 
-            if (posts == null)
-            {
-                return NotFound();
-            }
+                    if (posts == null)
+                    {
+                        return BadRequest("Failed To get data");
+                    }
 
-            return posts;
+                    return posts;
+                }
+                else
+                {
+                    return BadRequest("Failed To get data");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return NotFound();
+
+                return BadRequest("Failed To get data");
+
             }
+            
         }
 
         // PUT: api/Posts/5
@@ -99,31 +112,48 @@ namespace TheyNeedUsAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Posts>> PostPosts(Posts posts)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                await _postsRepository.Register(posts);
+
+                return CreatedAtAction("GetPosts", new { id = posts.Id }, posts);
             }
-          await  _postsRepository.Register(posts);
+            catch (Exception)
+            {
+
+                return BadRequest("Failed to save"); 
+            }
            
-            return CreatedAtAction("GetPosts", new { id = posts.Id }, posts);
         }
 
         // DELETE: api/Posts/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Posts>> DeletePosts(int id)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }           
-            if (! await PostsExists(id))
-            {
-                return NotFound();
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                if (!await PostsExists(id))
+                {
+                    return NotFound();
+                }
+
+                await _postsRepository.RemovePost(id);
+
+                return Ok();
             }
+            catch (Exception)
+            {
 
-          await  _postsRepository.RemovePost(id);
-
-            return Ok();
+                return BadRequest("Something wrong");
+            }
         }
 
         private async Task<bool> PostsExists(int id)
