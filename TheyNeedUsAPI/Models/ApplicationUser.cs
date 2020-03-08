@@ -34,5 +34,7 @@ namespace TheyNeedUsAPI.Models
 
         [DataType(DataType.Date)]
         public DateTime DOB { get; set; }
+        [Required]
+        public string Address { get; set; }
     }
 }
