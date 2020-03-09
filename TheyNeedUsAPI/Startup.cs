@@ -15,6 +15,8 @@ using TheyNeedUsAPI.Contracts;
 using TheyNeedUsAPI.Repositories;
 using Microsoft.AspNetCore.Identity;
 using TheyNeedUsAPI.Models;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace TheyNeedUsAPI
 {
@@ -22,10 +24,10 @@ namespace TheyNeedUsAPI
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _config = configuration;
         }
         readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-        public IConfiguration Configuration { get; }
+        private readonly IConfiguration _config;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -33,7 +35,21 @@ namespace TheyNeedUsAPI
             services.AddIdentity<ApplicationUser, IdentityRole>(cfg =>
             {
                 cfg.User.RequireUniqueEmail = true;                
-            }).AddEntityFrameworkStores<TheyNeedUsAPIContext>();
+            })
+                .AddEntityFrameworkStores<TheyNeedUsAPIContext>();
+            services.AddAuthentication()
+                .AddCookie()
+                .AddJwtBearer(cfg => 
+                {
+                    cfg.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidIssuer = _config["Tokens:Issuer"],
+                        ValidAudience= _config["Tokens:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]))
+                    };
+                });
+
+
             services.AddScoped<IPostsRepository, PostsRepository>();
             services.AddControllers();
 
@@ -70,10 +86,9 @@ namespace TheyNeedUsAPI
             app.UseCors(MyAllowSpecificOrigins);
 
             app.UseHttpsRedirection();
-            app.UseAuthentication();
+            app.UseAuthentication();        
+            app.UseRouting();
             app.UseAuthorization();
-
-            app.UseRouting();   
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

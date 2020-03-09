@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http.Cors;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ namespace TheyNeedUsAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
-   
+    [Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme)]
     public class PostsController : ControllerBase
     {
       
